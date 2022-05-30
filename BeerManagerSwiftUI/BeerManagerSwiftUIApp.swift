@@ -8,10 +8,16 @@
 import SwiftUI
 
 @main
-struct BeerManagerSwiftUIApp: App {
+struct BeerProManagerApp: App {
+    
+    @StateObject private var vm = HomeViewModel()
+    
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            NavigationView {
+                HomeView()
+            }
+            .environmentObject(vm)
         }
     }
 }
