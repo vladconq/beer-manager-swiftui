@@ -11,14 +11,11 @@ import Combine
 class BeerDataService {
     
     @Published var allBeers: [Beer] = []
+    @Published var isFinished: Bool = false
     private var cancellables = Set<AnyCancellable>()
     
-    init() {
-        getBeers()
-    }
-    
-    func getBeers() {
-        guard let url = URL(string: "https://api.punkapi.com/v2/beers") else { return }
+    func getBeers(for page: Int) {
+        guard let url = URL(string: "https://api.punkapi.com/v2/beers?page=\(page)&per_page=20") else { return }
         
         URLSession.shared.dataTaskPublisher(for: url)
             .tryMap({ output -> Data in
@@ -38,7 +35,11 @@ class BeerDataService {
                     print(String(describing: error))
                 }
             } receiveValue: { [weak self] returnedBeers in
-                self?.allBeers = returnedBeers
+                if returnedBeers.isEmpty {
+                    self?.isFinished.toggle()
+                } else {
+                    self?.allBeers.append(contentsOf: returnedBeers)
+                }
             }
             .store(in: &cancellables)
     }

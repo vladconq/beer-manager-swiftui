@@ -12,13 +12,38 @@ struct HomeView: View {
     @EnvironmentObject private var vm: HomeViewModel
     
     var body: some View {
-        List {
-            ForEach(vm.allBeers) { beer in
-                Text("\(beer.name)")
+        VStack {
+            if vm.allBeers.isEmpty {
+                ProgressView()
+                    .padding(.top, 30)
+                Spacer()
+            } else {
+                ScrollView {
+                    LazyVStack(alignment: .leading, spacing: 12) {
+                        ForEach(vm.allBeers) { beer in
+                            Text("\(beer.name)")
+                                .onAppear {
+                                    if beer == self.vm.allBeers.last && !vm.isFinished {
+                                        vm.fetchBeers()
+                                    }
+                                }
+                            Rectangle()
+                                .fill(.gray)
+                                .opacity(0.4)
+                                .frame(height: 0.5)
+                        }
+                        if !vm.isFinished {
+                            progressView
+                        }
+                    }
+                    .padding(.leading, 20)
+                }
             }
         }
-        .listStyle(PlainListStyle())
         .navigationTitle("All Beers")
+        .onAppear() {
+            vm.fetchBeers()
+        }
     }
 }
 
@@ -28,4 +53,20 @@ struct HomeView_Previews: PreviewProvider {
             HomeView()
         }
     }
+}
+
+extension HomeView {
+    
+    private var progressView: some View {
+        HStack {
+            Spacer()
+            ProgressView()
+            Spacer()
+        }
+        .listRowSeparator(.hidden)
+        .onAppear {
+            print("aha")
+        }
+    }
+    
 }

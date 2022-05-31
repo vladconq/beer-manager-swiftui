@@ -7,16 +7,14 @@
 
 import Foundation
 
-struct Beer: Identifiable, Codable {
+struct Beer: Identifiable, Codable, Equatable {
     let id: Int
-    let name, tagline, firstBrewed, welcomeDescription: String
-    let imageURL: String
-    let targetFg: Int
-    let attenuationLevel, targetOg: Double
-    let ph, ebc, srm, ibu, abv: Double?
+    let targetFg: Int?
+    let ph, ebc, srm, ibu, abv, targetOg, attenuationLevel: Double?
+    let name, tagline, firstBrewed, welcomeDescription, brewersTips, contributedBy: String
+    let imageURL: String?
     let foodPairing: [String]
-    let brewersTips, contributedBy: String
-
+    
     enum CodingKeys: String, CodingKey {
         case id, name, tagline
         case firstBrewed = "first_brewed"
